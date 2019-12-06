@@ -15,7 +15,7 @@ public class EC2 {
     private static AWSCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(new ProfileCredentialsProvider().getCredentials());
     private static AmazonEC2 ec2 = AmazonEC2ClientBuilder.standard()
             .withCredentials(credentialsProvider)
-            .withRegion("us-west-2")
+            .withRegion("us-east-1")
             .build();
 
     private static List<Instance> runningInstances = new LinkedList<Instance>();
@@ -37,5 +37,8 @@ public class EC2 {
     }
     public static void runMachines(){
 
+    }
+
+    public static void runMachines(int i, int i1, String manager, String something) {
     }
 }
