@@ -5,13 +5,18 @@ import com.amazonaws.services.sqs.model.*;
 import java.util.List;
 
 public class SQS {
-    private AmazonSQS sqs = AmazonSQSClientBuilder.defaultClient();
+
+    private AmazonSQS sqs = AmazonSQSClientBuilder.standard()
+            .withCredentials(Credentials.getCredentials())
+            .withRegion("us-east-1")
+            .build();
     private String managerQURL;
     private String workersQURL;
 
     public SQS() {
-        CreateQueueRequest managerQReq = new CreateQueueRequest("managerQ3");  //TODO: change name?
-        CreateQueueRequest workersQReq = new CreateQueueRequest("workersQ3");
+
+        CreateQueueRequest managerQReq = new CreateQueueRequest("managerSQS");
+        CreateQueueRequest workersQReq = new CreateQueueRequest("workerSQS");
 
         managerQURL = sqs.createQueue(managerQReq).getQueueUrl();
         workersQURL = sqs.createQueue(workersQReq).getQueueUrl();
@@ -22,11 +27,11 @@ public class SQS {
         return sqs.createQueue(userQReq).getQueueUrl();
     }
 
-    // send message to q
+    // send message to q = M/W
     public void sendMessage(String q, String msg) {
 
         try {
-            String qURL = getQURL(q);
+            String qURL = getQURL(q); //return M
             sqs.sendMessage(new SendMessageRequest(qURL, msg));
         } catch (Exception e) {
             e.printStackTrace();
@@ -51,18 +56,15 @@ public class SQS {
     }
 
     // delete message
-    public boolean removeMessage(String q, Message msg) {
+    public void removeMessage(String q, Message msg) {
         try {
             String qURL = getQURL(q);
             String messageRecieptHandle = msg.getReceiptHandle();
             DeleteMessageRequest deleteMessageRequest = new DeleteMessageRequest(qURL, messageRecieptHandle);
-            if (sqs.deleteMessage(deleteMessageRequest) != null) {
-                return true;
-            }
+            sqs.deleteMessage(deleteMessageRequest);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return false;
     }
 
     public void setMsgVisibility(String q, String msgReceipt, int timeout) {
@@ -80,7 +82,7 @@ public class SQS {
         }
     }
 
-    public void deleteQ(String q) {  //TODO: need to use DeleteQueueRequest??
+    public void deleteQ(String q) {
         String qURL = getQURL(q);
         sqs.deleteQueue(qURL);
     }

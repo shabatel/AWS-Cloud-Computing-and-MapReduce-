@@ -5,12 +5,22 @@ public class TitleReviews{
     private String title;
     private Review[] reviews;
 
+
+
+    public Review[] getReviews() {
+        return reviews;
+    }
+
     public String getTitle() {
         return title;
     }
 
-    public Review[] getReviews() {
-        return reviews;
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setReviews(Review[] reviews) {
+        this.reviews = reviews;
     }
 
     @Override
